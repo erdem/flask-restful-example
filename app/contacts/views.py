@@ -1,6 +1,9 @@
 from flask import Blueprint, jsonify
 from flask import request
 
+from app.contacts.models import Contact
+from app.contacts.schemas import ContactSchema
+from app.database import db
 
 contacts_api = Blueprint('contacts_api', __name__)
 
@@ -8,9 +11,6 @@ contacts_api = Blueprint('contacts_api', __name__)
 @contacts_api.route('/', methods=["GET"])
 @contacts_api.route('/<string:username>/', methods=["GET"])
 def retrieve_contacts(username=None):
-    from app.contacts.models import Contact
-    from app.contacts.schemas import ContactSchema
-
     if username:
         contact = Contact.query.filter_by(username=username).first_or_404()
         schema = ContactSchema().dump(contact)
@@ -23,8 +23,6 @@ def retrieve_contacts(username=None):
 
 @contacts_api.route('/', methods=["POST"])
 def create_contact():
-    from app.contacts.schemas import ContactSchema
-
     data = request.get_json()
     schema = ContactSchema()
 
@@ -37,9 +35,6 @@ def create_contact():
 
 @contacts_api.route('/<string:username>/', methods=["PUT", "PATCH"])
 def update_contact(username):
-    from app.contacts.schemas import ContactSchema
-    from app.contacts.models import Contact
-
     contact = Contact.query.filter_by(username=username).first_or_404()
 
     data = request.get_json()
@@ -60,8 +55,6 @@ def update_contact(username):
 
 @contacts_api.route('/<string:username>/', methods=["DELETE"])
 def delete_contact(username):
-    from app.contacts.models import Contact
-    from app import db
     Contact.query.filter_by(username=username).first_or_404()
     Contact.query.filter_by(username=username).delete()
     db.session.commit()

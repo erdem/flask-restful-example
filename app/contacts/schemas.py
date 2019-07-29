@@ -1,8 +1,8 @@
-from marshmallow import Schema, fields, post_load, validates, ValidationError, pre_dump
+from marshmallow import Schema, fields, post_load, validates, ValidationError
 
-from app import db
-from app.utils import get_config
+from app.database import db
 from app.contacts.models import Contact, ContactEmail
+from app.utils import get_config
 
 
 class ContactEmailSchema(Schema):
