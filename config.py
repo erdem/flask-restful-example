@@ -10,10 +10,12 @@ class BaseConfig:
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
+    DOMAIN = 'http://localhost:5000'
 
 
 class TestingConfig(BaseConfig):
     TESTING = True
+    DOMAIN = 'http://testserver'
 
     # Use memory for DB files
     SQLALCHEMY_DATABASE_URI = 'sqlite://'

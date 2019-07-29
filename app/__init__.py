@@ -4,11 +4,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 from app.contacts.views import contacts_api
-
-CONFIG_NAME_MAPPER = {
-    'development': 'config.DevelopmentConfig',
-    'testing': 'config.TestingConfig',
-}
+from app.utils import get_config
 
 db = SQLAlchemy()
 
@@ -20,12 +16,8 @@ def create_app(config_name=None, **kwargs):
 
     app = Flask(__name__, **kwargs)
 
-    flask_config_name = os.getenv('FLASK_CONFIG', 'development')
-    if config_name is not None:
-        flask_config_name = config_name
-
     try:
-        app.config.from_object(CONFIG_NAME_MAPPER[flask_config_name])
+        app.config.from_object(get_config(config_name))
     except ImportError:
         raise Exception('Invalid Config')
 

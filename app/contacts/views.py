@@ -33,7 +33,7 @@ def create_contact():
     return jsonify(schema.data), 201
 
 
-@contacts_api.route('/<string:username>/', methods=["PUT"])
+@contacts_api.route('/<string:username>/', methods=["PUT", "PATCH"])
 def update_contact(username):
     from app.contacts.schemas import ContactSchema
     from app.contacts.models import Contact
@@ -42,13 +42,29 @@ def update_contact(username):
 
     data = request.get_json()
 
+    # avoid username validation if the username didn't change
+    if contact.username == data.get('username'):
+        data.pop('username', None)
+
     schema = ContactSchema()
-    schema.update_only = True
-    errors = schema.validate(data, partial=True)
+    if request.method == 'PATCH':
+        errors = schema.validate(data, partial=True)
+    else:
+        errors = schema.validate(data)
 
     if errors:
         return jsonify(errors), 400
 
     schema.update_contact(contact, data)
-    updated_contact = Contact.query.filter_by(username=username).first()
-    return jsonify(ContactSchema().dump(updated_contact)), 202
+    updated_contact = Contact.query.filter_by(id=contact.id).first()
+    return jsonify(ContactSchema().dump(updated_contact).data), 202
+
+
+@contacts_api.route('/<string:username>/', methods=["DELETE"])
+def delete_contact(username):
+    from app.contacts.models import Contact
+    from app import db
+    Contact.query.filter_by(username=username).first_or_404()
+    Contact.query.filter_by(username=username).delete()
+    db.session.commit()
+    return '', 204
