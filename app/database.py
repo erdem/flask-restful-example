@@ -1,7 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 
 
-db = SQLAlchemy()
+db = SQLAlchemy(session_options={'autocommit': True})
 
 def init_db(app):
     with app.app_context():

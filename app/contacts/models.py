@@ -10,7 +10,7 @@ class Contact(db.Model):
     username = db.Column(db.String(length=20), unique=True, index=True, nullable=False)
     first_name = db.Column(db.String, nullable=False)
     last_name = db.Column(db.String, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.now)
+    created_at = db.Column(db.DateTime, default=datetime.now, index=True)
 
     emails = db.relationship(
         "ContactEmail",
@@ -35,8 +35,8 @@ class ContactEmail(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     contact_id = db.Column(db.Integer, db.ForeignKey('contact.id'))
     contact = db.relationship("Contact")
-    email = db.Column(db.String(120), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.now)
+    email = db.Column(db.String(120), nullable=False, unique=True)
+    created_at = db.Column(db.DateTime, default=datetime.now, index=True)
 
     __mapper_args__ = {
         "order_by": created_at

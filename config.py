@@ -9,14 +9,16 @@ class BaseConfig:
 
 
 class DevelopmentConfig(BaseConfig):
+    ENV='development'
     DEBUG = True
     DOMAIN = 'http://localhost:5000'
 
 
 class TestingConfig(BaseConfig):
+    ENV='testing'
     TESTING = True
     DOMAIN = 'http://testserver'
 
     # Use memory for DB files
-    SQLALCHEMY_DATABASE_URI = 'sqlite://'
+    SQLALCHEMY_DATABASE_URI = 'sqlite://:memory:'
 

@@ -26,7 +26,7 @@ def create_contact():
     data = request.get_json()
     schema = ContactSchema()
 
-    validated_data, errors = schema.load(data)
+    errors = schema.validate(data)
 
     if errors:
         return jsonify(errors), 400
