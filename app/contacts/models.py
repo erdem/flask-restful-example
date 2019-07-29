@@ -11,7 +11,7 @@ class Contact(db.Model):
     first_name = db.Column(db.String)
     last_name = db.Column(db.String)
     email = db.Column(db.String(120))
-    create_at = db.Column(db.DateTime, default=datetime.now)
+    created_at = db.Column(db.DateTime, default=datetime.now())
 
     def __repr__(self):
         return (
