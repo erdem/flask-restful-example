@@ -10,13 +10,15 @@ CONFIG_NAME_MAPPER = {
     'testing': 'config.TestingConfig',
 }
 
+db = SQLAlchemy()
+
+
 def create_app(config_name=None, **kwargs):
     """
     Entry point to the Flask RESTful Server application.
     """
 
     app = Flask(__name__, **kwargs)
-    app.register_blueprint(contacts_api, url_prefix='/api/contacts/')
 
     flask_config_name = os.getenv('FLASK_CONFIG', 'development')
     if config_name is not None:
@@ -27,6 +29,11 @@ def create_app(config_name=None, **kwargs):
     except ImportError:
         raise Exception('Invalid Config')
 
-    db = SQLAlchemy(app)
-    db.create_all()
+    app.register_blueprint(contacts_api, url_prefix='/api/contacts/')
+
+    with app.app_context():
+        db.init_app(app)
+        db.create_all()
     return app
+
+from app.contacts import models
