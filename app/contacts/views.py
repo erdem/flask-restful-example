@@ -26,11 +26,13 @@ def create_contact():
     from app.contacts.schemas import ContactSchema
 
     data = request.get_json()
-    schema = ContactSchema().load(data)
+    schema = ContactSchema()
 
-    if schema.errors:
-        return jsonify(schema.errors), 400
-    return jsonify(schema.data), 201
+    validated_data, errors = schema.load(data)
+
+    if errors:
+        return jsonify(errors), 400
+    return jsonify(schema.dump(schema.instance).data), 201
 
 
 @contacts_api.route('/<string:username>/', methods=["PUT", "PATCH"])
@@ -42,15 +44,11 @@ def update_contact(username):
 
     data = request.get_json()
 
-    # avoid username validation if the username didn't change
-    if contact.username == data.get('username'):
-        data.pop('username', None)
-
     schema = ContactSchema()
     if request.method == 'PATCH':
         errors = schema.validate(data, partial=True)
     else:
-        errors = schema.validate(data)
+        errors = schema.validate(data, exclude=1)
 
     if errors:
         return jsonify(errors), 400
