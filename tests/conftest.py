@@ -52,7 +52,6 @@ def session(app, db, request):
         db_instance.session = sess
         yield sess
 
-        # Cleanup
         sess.remove()
         # This instruction rollsback any commit that were executed in the tests.
         txn.rollback()
