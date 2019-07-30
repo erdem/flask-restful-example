@@ -1,6 +1,5 @@
 import os
 import pytest
-from sqlalchemy import event
 
 from app import create_app
 from app.database import db as db_instance
