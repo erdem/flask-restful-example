@@ -11,13 +11,11 @@ class BaseConfig:
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     CELERYBEAT_SCHEDULE = {
         'generate_contacts': {
-            'task': 'app.contacts.tasks.generate_random_contacts',
-            # Every minute
+            'task': 'app.contacts.tasks.generate_random_contact',
             'schedule': timedelta(seconds=15),
         },
         'clean_contacts': {
             'task': 'app.contacts.tasks.clean_contacts',
-            # Every minute
             'schedule': timedelta(minutes=1),
         },
     }

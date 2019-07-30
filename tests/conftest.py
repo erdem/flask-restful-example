@@ -1,7 +1,9 @@
 import os
 import pytest
+from sqlalchemy import event
 
 from app import create_app
+from app.database import db as db_instance
 
 
 os.environ["FLASK_CONFIG"] = 'testing'
@@ -10,11 +12,9 @@ os.environ["FLASK_CONFIG"] = 'testing'
 @pytest.yield_fixture(scope='session')
 def app():
     app = create_app(config_name='testing')
-    from app.database import db as db_instance
 
     with app.app_context():
         yield app
-        db_instance.drop_all()
 
 
 @pytest.fixture
@@ -30,6 +30,29 @@ def test_client(app, app_context):
 
 @pytest.yield_fixture(scope='session')
 def db(app):
-    from app.database import db as db_instance
-    yield db_instance
-    db_instance.drop_all()
+    with app.app_context():
+        db_instance.drop_all()
+        db_instance.create_all()
+        yield db_instance
+
+
+
+@pytest.yield_fixture(scope="class", autouse=True)
+def session(app, db, request):
+    """
+    Returns function-scoped session.
+    """
+    with app.app_context():
+        conn = db_instance.engine.connect()
+        txn = conn.begin()
+
+        options = dict(bind=conn, binds={})
+        sess = db_instance.create_scoped_session(options=options)
+
+        db_instance.session = sess
+        yield sess
+
+        # Cleanup
+        sess.remove()
+        # This instruction rollsback any commit that were executed in the tests.
+        txn.rollback()
