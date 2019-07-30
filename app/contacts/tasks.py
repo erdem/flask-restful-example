@@ -30,6 +30,5 @@ def clean_contacts():
         Contact.created_at >= now-timedelta(minutes=100)
     )
     for contact in contacts:
-        print(contact.id)
         db.session.delete(contact)
     db.session.commit()

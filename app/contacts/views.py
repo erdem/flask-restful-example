@@ -59,6 +59,6 @@ def update_contact(username):
 @contacts_api.route('/<string:username>/', methods=["DELETE"])
 def delete_contact(username):
     contact = Contact.query.filter_by(username=username).first_or_404()
-    db.session(contact)
+    db.session.delete(contact)
     db.session.commit()
     return '', HTTPStatus.NO_CONTENT
