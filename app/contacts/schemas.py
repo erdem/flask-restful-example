@@ -2,7 +2,6 @@ from marshmallow import Schema, fields, post_load, validates, ValidationError
 
 from app.database import db
 from app.contacts.models import Contact, ContactEmail
-from app.utils import get_config
 
 
 class ContactEmailSchema(Schema):
@@ -20,10 +19,8 @@ class ContactSchema(Schema):
     uri = fields.Method("get_item_uri")
 
     def get_item_uri(self, obj):
-        config = get_config()
-        return '{config.DOMAIN}/api/contacts/{obj.username}/'.format(
+        return '/api/contacts/{obj.username}/'.format(
             obj=obj,
-            config=config
         )
 
     @validates('username')
@@ -32,6 +29,22 @@ class ContactSchema(Schema):
             raise ValidationError(
                 '"{username}" username already exists, '
                 'please use a different username.'.format(username=username)
+            )
+
+    @validates('emails')
+    def validate_emails(self, emails):
+        exists_in_contact_emails = []
+        for d in emails:
+            email = d.get('email')
+            if bool(ContactEmail.query.filter_by(email=email).first()):
+                exists_in_contact_emails.append(email)
+
+        if exists_in_contact_emails:
+            raise ValidationError(
+                '"{emails}" emails already exists, '
+                'please try different emails.'.format(
+                    emails=", ".join(exists_in_contact_emails)
+                )
             )
 
     @post_load

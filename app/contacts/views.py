@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from flask import Blueprint, jsonify
 from flask import request
 
@@ -14,11 +16,11 @@ def retrieve_contacts(username=None):
     if username:
         contact = Contact.query.filter_by(username=username).first_or_404()
         schema = ContactSchema().dump(contact)
-        return jsonify(schema.data), 200
+        return jsonify(schema.data), HTTPStatus.OK
 
     contacts = Contact.query.all()
     schema = ContactSchema(many=True).dump(contacts)
-    return jsonify(schema.data), 200
+    return jsonify(schema.data), HTTPStatus.OK
 
 
 @contacts_api.route('/', methods=["POST"])
@@ -26,11 +28,11 @@ def create_contact():
     data = request.get_json()
     schema = ContactSchema()
 
-    errors = schema.validate(data)
+    validated_data, errors = schema.load(data)
 
     if errors:
-        return jsonify(errors), 400
-    return jsonify(schema.dump(schema.instance).data), 201
+        return jsonify(errors), HTTPStatus.BAD_REQUEST
+    return jsonify(schema.dump(schema.instance).data), HTTPStatus.CREATED
 
 
 @contacts_api.route('/<string:username>/', methods=["PUT", "PATCH"])
@@ -43,14 +45,14 @@ def update_contact(username):
     if request.method == 'PATCH':
         errors = schema.validate(data, partial=True)
     else:
-        errors = schema.validate(data, exclude=1)
+        errors = schema.validate(data)
 
     if errors:
-        return jsonify(errors), 400
+        return jsonify(errors), HTTPStatus.BAD_REQUEST
 
     schema.update_contact(contact, data)
     updated_contact = Contact.query.filter_by(id=contact.id).first()
-    return jsonify(ContactSchema().dump(updated_contact).data), 202
+    return jsonify(ContactSchema().dump(updated_contact).data), HTTPStatus.ACCEPTED
 
 
 @contacts_api.route('/<string:username>/', methods=["DELETE"])
@@ -58,4 +60,4 @@ def delete_contact(username):
     Contact.query.filter_by(username=username).first_or_404()
     Contact.query.filter_by(username=username).delete()
     db.session.commit()
-    return '', 204
+    return '', HTTPStatus.NO_CONTENT

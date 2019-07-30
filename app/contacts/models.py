@@ -4,8 +4,6 @@ from app.database import db
 
 
 class Contact(db.Model):
-    __tablename__ = 'contact'
-
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(length=20), unique=True, index=True, nullable=False)
     first_name = db.Column(db.String, nullable=False)
@@ -17,6 +15,11 @@ class Contact(db.Model):
         back_populates="contact",
         cascade="all, delete-orphan"
     )
+
+    __mapper_args__ = {
+        "order_by": created_at
+    }
+    __tablename__ = 'contact'
 
     def __repr__(self):
         return (
@@ -30,8 +33,6 @@ class Contact(db.Model):
 
 
 class ContactEmail(db.Model):
-    __tablename__ = 'contact_email'
-
     id = db.Column(db.Integer, primary_key=True)
     contact_id = db.Column(db.Integer, db.ForeignKey('contact.id'))
     contact = db.relationship("Contact")
@@ -41,6 +42,7 @@ class ContactEmail(db.Model):
     __mapper_args__ = {
         "order_by": created_at
     }
+    __tablename__ = 'contact_email'
 
     def __repr__(self):
         return (

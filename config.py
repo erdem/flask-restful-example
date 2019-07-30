@@ -20,5 +20,5 @@ class TestingConfig(BaseConfig):
     DOMAIN = 'http://testserver'
 
     # Use memory for DB files
-    SQLALCHEMY_DATABASE_URI = 'sqlite://:memory:'
+    SQLALCHEMY_DATABASE_URI = 'sqlite://'
 

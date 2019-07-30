@@ -32,20 +32,5 @@ def test_client(app, app_context):
 def db(app):
     from app.database import db as db_instance
     yield db_instance
+    db_instance.drop_all()
 
-
-@pytest.fixture(scope='session')
-def temp_db_instance_helper(db):
-    def temp_db_instance_manager(instance):
-        with db.session.begin():
-            db.session.add(instance)
-
-        yield instance
-
-        mapper = instance.__class__.__mapper__
-        assert len(mapper.primary_key) == 1
-        instance.__class__.query\
-            .filter(mapper.primary_key[0] == mapper.primary_key_from_instance(instance)[0])\
-            .delete()
-
-    return temp_db_instance_manager
