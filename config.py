@@ -12,6 +12,8 @@ class DevelopmentConfig(BaseConfig):
     ENV='development'
     DEBUG = True
     DOMAIN = 'http://localhost:5000'
+    CELERY_BROKER_URL = 'redis://localhost:6379/0'
+    CELERY_RESULT_BACKEND = 'redis://localhost:6379/1'
 
 
 class TestingConfig(BaseConfig):

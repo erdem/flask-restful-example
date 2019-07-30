@@ -33,4 +33,3 @@ def db(app):
     from app.database import db as db_instance
     yield db_instance
     db_instance.drop_all()
-
