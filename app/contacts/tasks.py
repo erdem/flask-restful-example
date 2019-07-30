@@ -1,10 +1,31 @@
+from datetime import datetime, timedelta
+
 from app import celery
+from app.database import db
+from app.contacts.models import Contact, ContactEmail
+from app.utils import get_random_name, generate_random_emails
 
 
 @celery.task
-def send_async_email(msg):
-    print(msg)
+def generate_random_contacts():
+    contact_data = {
+        'username': get_random_name(),
+        'first_name': get_random_name(),
+        'last_name': get_random_name(),
+    }
+    emails = generate_random_emails(2)
+    contact = Contact(**contact_data)
+    contact_emails = [ContactEmail(email=email) for email in emails]
+    contact.emails.extend(contact_emails)
+    db.session.add(contact)
+    db.session.add_all(contact_emails)
+    db.session.commit()
 
 
-def send_email(to, subject, template, **kwargs):
-    send_async_email.delay(to)
+@celery.task
+def clean_contacts():
+    now = datetime.now()
+    Contact.query.filter(
+        Contact.created_at >= now-timedelta(minutes=15)
+    ).delete()
+    db.session.commit()
