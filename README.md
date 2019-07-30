@@ -15,8 +15,9 @@ Setup
 6. Open a second terminal and start celery: `celery worker -A celery_worker.celery --loglevel=info`.
 7. Open a third terminal and start celery-beat: `celery -A celery_worker:celery beat --loglevel=INFO`.
 8. Start the Flask application on your original terminal window: `flask run`.
-9. Go to `http://localhost:5000/` and enjoy!
+9. Go to `http://localhost:5000/api/contacts/` and enjoy!
 
+> You can run the tests with `pytest tests` command.
 
 Some example usage for Contact API
 ----------------------------------

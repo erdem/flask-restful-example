@@ -1,5 +1,3 @@
-import pytest
-
 from app.contacts.models import Contact
 from app.contacts.tasks import generate_random_contact, clean_contacts
 

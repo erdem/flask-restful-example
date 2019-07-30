@@ -1,7 +1,7 @@
 from marshmallow.validate import Email
 
 from app import get_config
-from app.utils import DOMAINS, get_random_domain, generate_random_emails
+from app.utils import DOMAINS, get_random_domain, generate_random_emails, get_random_name
 
 
 def test_get_config():
@@ -15,6 +15,12 @@ def test_get_config():
 def test_get_random_domain():
     domain = get_random_domain(DOMAINS)
     assert domain in DOMAINS
+
+
+def test_get_random_name():
+    name = get_random_name()
+    assert isinstance(name, str) is True
+    assert len(name) >= 5
 
 
 def test_generate_random_emails():
