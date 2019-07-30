@@ -1,0 +1,20 @@
+language: python
+
+python:
+  - 3.5
+  - 3.6
+  - 3.7
+
+env:
+  - FLASK=1.0.2
+  - FLASK=1.1.1
+
+cache:
+  directories:
+  - "$HOME/virtualenv"
+
+install:
+  - pip install -r requirements.txt
+
+script:
+  - pytest tests
