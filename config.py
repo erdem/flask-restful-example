@@ -1,4 +1,7 @@
 import os
+from datetime import timedelta
+
+from celery.schedules import crontab
 
 
 class BaseConfig:
@@ -6,6 +9,18 @@ class BaseConfig:
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
     SQLALCHEMY_DATABASE_URI = 'sqlite:///%s' % (os.path.join(PROJECT_ROOT, "db.sqlite3"))
     SQLALCHEMY_TRACK_MODIFICATIONS = True
+    CELERYBEAT_SCHEDULE = {
+        'generate_contacts': {
+            'task': 'app.contacts.tasks.generate_random_contacts',
+            # Every minute
+            'schedule': timedelta(seconds=15),
+        },
+        'clean_contacts': {
+            'task': 'app.contacts.tasks.clean_contacts',
+            # Every minute
+            'schedule': timedelta(minutes=1),
+        },
+    }
 
 
 class DevelopmentConfig(BaseConfig):

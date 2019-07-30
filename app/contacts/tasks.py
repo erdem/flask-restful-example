@@ -26,6 +26,6 @@ def generate_random_contacts():
 def clean_contacts():
     now = datetime.now()
     Contact.query.filter(
-        Contact.created_at >= now-timedelta(minutes=15)
+        Contact.created_at >= now-timedelta(minutes=1)
     ).delete()
     db.session.commit()
