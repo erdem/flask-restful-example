@@ -7,6 +7,7 @@ from app.contacts.models import Contact
 from app.contacts.schemas import ContactSchema
 from app.database import db
 
+
 contacts_api = Blueprint('contacts_api', __name__)
 
 
@@ -57,7 +58,7 @@ def update_contact(username):
 
 @contacts_api.route('/<string:username>/', methods=["DELETE"])
 def delete_contact(username):
-    Contact.query.filter_by(username=username).first_or_404()
-    Contact.query.filter_by(username=username).delete()
+    contact = Contact.query.filter_by(username=username).first_or_404()
+    db.session(contact)
     db.session.commit()
     return '', HTTPStatus.NO_CONTENT

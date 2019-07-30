@@ -6,7 +6,7 @@ import pytest
 
 
 def test_retrieve_contact_view(
-    db,
+    session,
     test_client,
     contact_item,
     contact_with_multiple_emails
@@ -43,31 +43,32 @@ def test_create_contact_view_validations(test_client):
     assert len(errors.keys()) == 3
 
 
-def test_create_contact_view(db, test_client, guido_contact_data):
+def test_create_contact_view(test_client, linus_contact_data):
     response = test_client.post(
         '/api/contacts/',
-        data=json.dumps(guido_contact_data),
+        data=json.dumps(linus_contact_data),
         content_type='application/json'
     )
     response_data = response.get_json()
     assert response.status_code == HTTPStatus.CREATED
     assert 'id' in response_data
-    assert response_data['username'] == guido_contact_data['username']
+    assert response_data['username'] == linus_contact_data['username']
 
 
-def test_put_update_contact_view(db, test_client, contact_item, knuth_contact_data, guido_contact_data):
+def test_put_update_contact_view(session, test_client, contact_item, knuth_contact_data, guido_contact_data):
     response = test_client.put(
         '/api/contacts/{0}/'.format(contact_item.username),
-        data=json.dumps(knuth_contact_data),
+        data=json.dumps(guido_contact_data),
         content_type='application/json'
     )
     response_data = response.get_json()
     assert response.status_code == HTTPStatus.ACCEPTED
     assert response_data['id'] == contact_item.id
-    assert response_data['username'] == knuth_contact_data['username']
+    assert response_data['username'] == guido_contact_data['username']
 
     # Try to update the contact item with an exists in email
     knuth_contact_data['emails'] = guido_contact_data['emails']
+    knuth_contact_data['username'] = 'siteadmin'
     response = test_client.put(
         '/api/contacts/{0}/'.format(contact_item.username),
         data=json.dumps(knuth_contact_data),
@@ -79,7 +80,7 @@ def test_put_update_contact_view(db, test_client, contact_item, knuth_contact_da
 
 
 @pytest.mark.parametrize('new_email', ('siteadmin@mail.com', ))
-def test_partial_update_view(new_email, db, test_client, contact_item):
+def test_partial_update_view(new_email, session, test_client, contact_item):
     response = test_client.patch(
         '/api/contacts/{0}/'.format(contact_item.username),
         data=json.dumps(
@@ -97,7 +98,7 @@ def test_partial_update_view(new_email, db, test_client, contact_item):
 
 
 @pytest.mark.parametrize('new_username', ('newadmin', ))
-def test_partial_update_view(new_username, db, test_client, contact_item):
+def test_partial_update_view(new_username, session, test_client, contact_item):
     response = test_client.patch(
         '/api/contacts/{0}/'.format(contact_item.username),
         data=json.dumps(

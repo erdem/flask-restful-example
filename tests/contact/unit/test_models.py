@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from app.contacts.models import Contact, ContactEmail
 
 
