@@ -4,6 +4,18 @@ Flask Example
 This repository contains the example code for a contact API project, using SQLAlchemy, PyTest, Celery with Flask.
 
 
+### Tasks
+- Model a Contact with username, email, first name and surname.
+- Create a Restful API that returns a list of all contacts.
+- Returns a contact by username.
+- Saves a Contact.
+- Updates a Contact
+- Deletes a Contact
+- Allow a contact to have multiple email addresses.  Adjust GET, POST, PUT, DEL methods to the new sub entity.
+- Extend the GET to also accept the email address for contact retrieval.
+- Implement a celery task to create a random contact with two email addresses every 15 seconds. Any older entries then 1 min should be cleaned up and deleted.
+
+
 Setup
 -----
 
